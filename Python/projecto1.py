@@ -19,6 +19,27 @@ class NamesRepository(ABC):
         pass
 
 
+class NamesDict(NamesRepository):
+    def __init__(self):
+        self.names_dict = {}
+
+    def get_names(self):
+        return list(self.names_dict.keys())
+
+    def save(self, name):
+        if name not in self.names_dict:
+            self.names_dict[name] = name
+
+    def delete(self, name):
+        if name in self.names_dict:
+            del self.names_dict[name]
+
+    def update(self, old_name, new_name):
+        if old_name in self.names_dict:
+            del self.names_dict[old_name]
+            self.names_dict[new_name] = new_name
+
+
 class Names(NamesRepository):
     def __init__(self):
         self.names_list = []
@@ -40,7 +61,7 @@ class Names(NamesRepository):
                 break
 
 
-class MyApp:
+class NameManager:
     def __init__(self, names_repo: NamesRepository):
         self.names_instance = names_repo
 
@@ -59,7 +80,7 @@ class MyApp:
 
 
 class ConsoleController:
-    def __init__(self, app: MyApp):
+    def __init__(self, app: NameManager):
         self.app = app
 
     def run(self):
@@ -100,8 +121,8 @@ class ConsoleController:
 
 
 if __name__ == "__main__":
-    names = Names()
-    app = MyApp(names)
+    names = NamesDict()
+    app = NameManager(names)
 
     consoleController = ConsoleController(app)
     consoleController.run()
